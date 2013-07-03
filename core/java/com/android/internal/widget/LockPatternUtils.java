@@ -1277,7 +1277,7 @@ public class LockPatternUtils {
     }
 
     /**
-     * @deprecated
+     * @deprecated For unknown reason.
      * @param button
      * @param phoneState
      * @param shown

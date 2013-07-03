@@ -21084,6 +21084,9 @@ package android.telephony.gsm {
     field public static final deprecated int STATUS_ON_SIM_UNSENT = 7; // 0x7
   }
 
+  public static deprecated class SmsManager {
+  }
+
   public deprecated class SmsMessage {
     ctor public deprecated SmsMessage();
     method public static deprecated int[] calculateLength(java.lang.CharSequence, boolean);
@@ -21123,6 +21126,9 @@ package android.telephony.gsm {
     field public static final deprecated int MAX_USER_DATA_BYTES = 140; // 0x8c
     field public static final deprecated int MAX_USER_DATA_SEPTETS = 160; // 0xa0
     field public static final deprecated int MAX_USER_DATA_SEPTETS_WITH_HEADER = 153; // 0x99
+  }
+
+  public static deprecated class SmsMessage {
   }
 
   public static final deprecated class SmsMessage.MessageClass extends java.lang.Enum {
