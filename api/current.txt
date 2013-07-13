@@ -10021,6 +10021,7 @@ package android.hardware {
     method public deprecated boolean registerListener(android.hardware.SensorListener, int, int);
     method public boolean registerListener(android.hardware.SensorEventListener, android.hardware.Sensor, int);
     method public boolean registerListener(android.hardware.SensorEventListener, android.hardware.Sensor, int, android.os.Handler);
+    method public void reloadConfig();
     method public static boolean remapCoordinateSystem(float[], int, int, float[]);
     method public deprecated void unregisterListener(android.hardware.SensorListener);
     method public deprecated void unregisterListener(android.hardware.SensorListener, int);

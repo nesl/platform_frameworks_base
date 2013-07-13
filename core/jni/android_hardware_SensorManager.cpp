@@ -92,6 +92,13 @@ sensors_create_queue(JNIEnv *env, jclass clazz)
 }
 
 static void
+sensors_reload_config(JNIEnv *env, jclass clazz)
+{
+    SensorManager& mgr(SensorManager::getInstance());
+    mgr.reloadConfig();
+}
+
+static void
 sensors_destroy_queue(JNIEnv *env, jclass clazz, jint nativeQueue)
 {
     sp<SensorEventQueue> queue(reinterpret_cast<SensorEventQueue *>(nativeQueue));
@@ -173,7 +180,9 @@ static JNINativeMethod gMethods[] = {
     {"sensors_enable_sensor", "(ILjava/lang/String;II)Z",
                                             (void*)sensors_enable_sensor },
 
-    {"sensors_data_poll",  "(I[F[I[J)I",     (void*)sensors_data_poll },
+    {"sensors_data_poll",  "(I[F[I[J)I",    (void*)sensors_data_poll },
+
+    {"sensors_reload_config", "()V",        (void*)sensors_reload_config },
 };
 
 }; // namespace android
