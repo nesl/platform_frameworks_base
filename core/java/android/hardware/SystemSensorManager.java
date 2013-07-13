@@ -385,6 +385,13 @@ public class SystemSensorManager extends SensorManager {
         }
     }
 
+    /** @hide */
+    @Override
+    protected void reloadConfigImpl() {
+        Log.d(TAG, "SystemSensorManager::reloadConfigImpl");
+        sensors_reload_config();
+    }
+
     private static native void nativeClassInit();
 
     private static native int sensors_module_init();
@@ -395,4 +402,6 @@ public class SystemSensorManager extends SensorManager {
     static native void sensors_destroy_queue(int queue);
     static native boolean sensors_enable_sensor(int queue, String name, int sensor, int enable);
     static native int sensors_data_poll(int queue, float[] values, int[] status, long[] timestamp);
+
+    static native void sensors_reload_config();
 }

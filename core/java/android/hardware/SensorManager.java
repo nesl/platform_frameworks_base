@@ -650,6 +650,14 @@ public abstract class SensorManager {
     protected abstract boolean registerListenerImpl(SensorEventListener listener, Sensor sensor,
             int delay, Handler handler);
 
+    public void reloadConfig() {
+        Log.d(TAG, "SensorManager::reloadConfig");
+        reloadConfigImpl();
+    }
+
+    /** @hide */
+    protected abstract void reloadConfigImpl();
+
     /**
      * <p>
      * Computes the inclination matrix <b>I</b> as well as the rotation matrix
