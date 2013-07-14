@@ -402,5 +402,5 @@ public class SystemSensorManager extends SensorManager {
     static native boolean sensors_enable_sensor(int queue, String name, int sensor, int enable);
     static native int sensors_data_poll(int queue, float[] values, int[] status, long[] timestamp);
 
-    static native int sensors_reload_config();
+    static native void sensors_reload_config();
 }
