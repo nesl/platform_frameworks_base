@@ -388,6 +388,7 @@ public class SystemSensorManager extends SensorManager {
     /** @hide */
     @Override
     protected void reloadConfigImpl() {
+        Log.d(TAG, "SystemSensorManager::reloadConfigImpl");
         sensors_reload_config();
     }
 

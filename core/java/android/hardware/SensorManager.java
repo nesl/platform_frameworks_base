@@ -651,6 +651,7 @@ public abstract class SensorManager {
             int delay, Handler handler);
 
     public void reloadConfig() {
+        Log.d(TAG, "SensorManager::reloadConfig");
         reloadConfigImpl();
     }
 

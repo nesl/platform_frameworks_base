@@ -94,6 +94,7 @@ sensors_create_queue(JNIEnv *env, jclass clazz)
 static void
 sensors_reload_config(JNIEnv *env, jclass clazz)
 {
+    ALOGD("JNI-bridge: sensor_reload_config");
     SensorManager& mgr(SensorManager::getInstance());
     mgr.reloadConfig();
 }
