@@ -31,7 +31,7 @@ framework_res_source_path := APPS/framework-res_intermediates/src
 include $(CLEAR_VARS)
 
 # FRAMEWORKS_BASE_SUBDIRS comes from build/core/pathmap.mk
-LOCAL_SRC_FILES := $(call find-other-java-files,$(FRAMEWORKS_BASE_SUBDIRS))
+LOCAL_SRC_FILES += $(call find-other-java-files,$(FRAMEWORKS_BASE_SUBDIRS))
 
 # EventLogTags files.
 LOCAL_SRC_FILES += \
@@ -134,6 +134,7 @@ LOCAL_SRC_FILES += \
 	core/java/android/nfc/INfcAdapterExtras.aidl \
 	core/java/android/nfc/INfcTag.aidl \
 	core/java/android/os/ICancellationSignal.aidl \
+	core/java/android/os/IFirewallConfigService.aidl \
 	core/java/android/os/IHardwareService.aidl \
 	core/java/android/os/IMessenger.aidl \
 	core/java/android/os/INetworkManagementService.aidl \

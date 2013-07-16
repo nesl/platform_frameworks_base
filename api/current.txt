@@ -5438,6 +5438,7 @@ package android.content {
     field public static final java.lang.String DISPLAY_SERVICE = "display";
     field public static final java.lang.String DOWNLOAD_SERVICE = "download";
     field public static final java.lang.String DROPBOX_SERVICE = "dropbox";
+    field public static final java.lang.String FIREWALLCONFIG_SERVICE = "firewallconfigservice";
     field public static final java.lang.String INPUT_METHOD_SERVICE = "input_method";
     field public static final java.lang.String INPUT_SERVICE = "input";
     field public static final java.lang.String KEYGUARD_SERVICE = "keyguard";
@@ -16039,6 +16040,12 @@ package android.os {
     field public static final int OPEN = 32; // 0x20
   }
 
+  public class FirewallConfigManager {
+    method public static synchronized android.os.FirewallConfigManager getFirewallConfigManager();
+    method public android.os.IFirewallConfigService getFirewallConfigService();
+    method public void setFirewallConfig(java.lang.String);
+  }
+
   public class Handler {
     ctor public Handler();
     ctor public Handler(android.os.Handler.Callback);
@@ -16110,6 +16117,17 @@ package android.os {
 
   public static abstract interface IBinder.DeathRecipient {
     method public abstract void binderDied();
+  }
+
+  public abstract interface IFirewallConfigService implements android.os.IInterface {
+    method public abstract void setFirewallConfig(java.lang.String) throws android.os.RemoteException;
+  }
+
+  public static abstract class IFirewallConfigService.Stub extends android.os.Binder implements android.os.IFirewallConfigService {
+    ctor public IFirewallConfigService.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.os.IFirewallConfigService asInterface(android.os.IBinder);
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
   }
 
   public abstract interface IInterface {

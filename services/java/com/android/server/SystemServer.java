@@ -736,6 +736,15 @@ class ServerThread extends Thread {
             } catch (Throwable e) {
                 reportWtf("starting CertBlacklister", e);
             }
+
+            try {
+                Slog.i(TAG, "Sensor Firewall Config Service");
+                //TODO(krr): Register the service into ContextImpl.
+                ServiceManager.addService("firewallconfigservice",
+                        new FirewallConfigService(context));
+            } catch (Throwable e) {
+                reportWtf("starting FirewallConfigService service", e);
+            }
             
             if (context.getResources().getBoolean(
                     com.android.internal.R.bool.config_dreamsSupported)) {

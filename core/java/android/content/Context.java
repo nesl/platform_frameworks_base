@@ -1954,6 +1954,8 @@ public abstract class Context {
      */
     public static final String STORAGE_SERVICE = "storage";
 
+    public static final String FIREWALLCONFIG_SERVICE = "firewallconfigservice";
+
     /**
      * Use with {@link #getSystemService} to retrieve a
      * com.android.server.WallpaperService for accessing wallpapers.

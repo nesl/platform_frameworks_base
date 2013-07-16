@@ -1,0 +1,12 @@
+package android_sensorfirewall;
+
+// !!! ----------------------------------------------------------------------
+// !!! Make sure to make identical change in
+// !!! frameworks/native/services/sensorservice/FirewallConfigMessages.proto
+// !!! ----------------------------------------------------------------------
+
+option optimize_for = LITE_RUNTIME;
+
+message FirewallConfig {
+  optional string debug_info = 1;
+}
