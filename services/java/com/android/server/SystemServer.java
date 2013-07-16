@@ -371,6 +371,14 @@ class ServerThread extends Thread {
             } catch (Throwable e) {
                 reportWtf("starting Accessibility Manager", e);
             }
+            // Adding the firewallConfigUpdateService
+            try {
+            	Slog.i(TAG, "Starting FirewallConfigUpdateService");
+            	ServiceManager.addService("firewall", new FirewallConfigUpdateService(context));
+            	Slog.i(TAG, "FirewallConfigUpdateService started");
+            } catch (Throwable e) {
+            	Slog.e((TAG, "Failure starting FirewallConfigUpdateService",e)
+            }
         }
 
         try {
