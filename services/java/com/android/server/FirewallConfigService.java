@@ -46,7 +46,11 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
         }
 
         // TODO: Do some useful parsing, e.g. rewriting of the config.
-        Log.d(TAG, "Config debug_info: " + firewallConfig.getDebugInfo());
+        Log.d(TAG, "Writing the Firewall Config File");
+        for(Rule rule: firewallConfig.getRuleList()) {
+            Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
+            Log.d(TAG, "Action = " + rule.getAction().getActionType() + ":params: const = " + rule.getAction().getParam().getConstantValue() + ": delay = " + rule.getAction().getParam().getDelay() + ": mean = " + rule.getAction().getParam().getPerturb().getMean());
+        }
 
         // Serialize the FirewallConfig message to the config file. 
         File configFile = new File(kConfigFilename);
