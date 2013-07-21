@@ -18,4 +18,7 @@ LOCAL_JAVA_LIBRARIES := android.policy telephony-common
 
 include $(BUILD_JAVA_LIBRARY)
 
+LOCAL_STATIC_JAVA_LIBRARIES :=  # Cleaned out.
+LOCAL_JAVA_LIBRARIES += libprotobuf-java-2.3.0-lite
+
 include $(BUILD_DROIDDOC)
