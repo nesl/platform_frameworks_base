@@ -3,6 +3,7 @@ package com.android.server;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.util.Base64;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,21 +36,26 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
                 Binder.getCallingUid(), Binder.getCallingPid()));
 
         // Verify that the input string parses as a FirewallConfig message. 
-        FirewallConfig firewallConfig;
+        FirewallConfig firewallConfig = null;
         try {
-            ByteString byteString =
-                    ByteString.copyFromUtf8(serializedFirewallConfigProto);
-            firewallConfig = FirewallConfig.parseFrom(byteString);
+            //ByteString byteString =
+            //        ByteString.copyFromUtf8(serializedFirewallConfigProto);
+            //firewallConfig = FirewallConfig.parseFrom(byteString);
+            
+            byte[] byteArr = Base64.decode(serializedFirewallConfigProto, Base64.DEFAULT);
+            firewallConfig = FirewallConfig.parseFrom(byteArr);
         } catch (InvalidProtocolBufferException ex) {
             Log.e(TAG, "InvalidProtocolBufferException");
             return;
         }
 
         // TODO: Do some useful parsing, e.g. rewriting of the config.
-        Log.d(TAG, "Writing the Firewall Config File");
-        for(Rule rule: firewallConfig.getRuleList()) {
-            Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
-            Log.d(TAG, "Action = " + rule.getAction().getActionType() + ":params: const = " + rule.getAction().getParam().getConstantValue() + ": delay = " + rule.getAction().getParam().getDelay() + ": mean = " + rule.getAction().getParam().getPerturb().getMean());
+        if(firewallConfig != null) {
+            Log.d(TAG, "Writing the Firewall Config File");
+            for(Rule rule: firewallConfig.getRuleList()) {
+                Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
+                Log.d(TAG, "Action = " + rule.getAction().getActionType() + ":params: const = " + rule.getAction().getParam().getConstantValue() + ": delay = " + rule.getAction().getParam().getDelay() + ": mean = " + rule.getAction().getParam().getPerturb().getMean());
+            }
         }
 
         // Serialize the FirewallConfig message to the config file. 
