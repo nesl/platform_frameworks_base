@@ -9,11 +9,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileLock;
 
 import android.os.Binder;
 import android.os.IFirewallConfigService;
 
-import com.google.protobuf.ByteString;
+//import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import android_sensorfirewall.FirewallConfigMessages.*;
@@ -59,8 +60,17 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
         }
 
         // Serialize the FirewallConfig message to the config file. 
-        File configFile = new File(kConfigFilename);
-        FileOutputStream outputStream;
+        FileOutputStream outputStream = null;
+        File configFile = null;
+        try{
+        	configFile = new File(kConfigFilename);
+        	if(!configFile.exists()) {
+        		configFile.createNewFile();
+        	}
+        } catch (IOException e) {
+        	Log.e(TAG, "IOException while opening the file for writing out protobuf");
+        	return;
+        }
 
         // TODO(krr): Need to lock the file?
         try {
@@ -73,25 +83,39 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
             return;
         }
 
+        Log.d(TAG, "Writing protobuf to file");
+        
         try {
-            firewallConfig.writeTo(outputStream);
+        	// a non-blocking call to get the lock on the file
+        	FileLock writeLock = outputStream.getChannel().tryLock();
+        	if(writeLock != null) {
+        		firewallConfig.writeTo(outputStream);
+        		outputStream.flush();
+        		writeLock.release();
+        	}
+        	else {
+        		Log.e(TAG, "Unable to get write lock on file to write protobuf");
+        		return;
+        	}
         } catch (IOException ex) {
             Log.e(TAG, "IOException while writing out protobuf.");
             return;
         }
 
         try {
-            outputStream.flush();
             outputStream.close();
         } catch (IOException ex) {
-            Log.e(TAG, "IOException while flush and close.");
+            Log.e(TAG, "IOException while close file.");
             return;
         }
 
+        Log.d(TAG, "Finished writing protobuf to file");
+        
         // Ask the sensorservice to reload its config.
         String serviceName = Context.SENSOR_SERVICE;
         SensorManager sensorManager =
                 (SensorManager)mContext.getSystemService(serviceName);
+        Log.d(TAG, "Calling reloadConfig.");
         sensorManager.reloadConfig();
     }
 }
