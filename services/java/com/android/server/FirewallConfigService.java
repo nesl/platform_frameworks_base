@@ -21,7 +21,7 @@ import android_sensorfirewall.FirewallConfigMessages.*;
 
 public class FirewallConfigService extends IFirewallConfigService.Stub {
     private static final String TAG = "FirewallConfigService";
-    private static final String kConfigFilename = "/etc/firewall-config";
+    private static final String kConfigFilename = "/data/firewall-config";
     private Context mContext;
 
     /**
