@@ -39,10 +39,6 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
         // Verify that the input string parses as a FirewallConfig message. 
         FirewallConfig firewallConfig = null;
         try {
-            //ByteString byteString =
-            //        ByteString.copyFromUtf8(serializedFirewallConfigProto);
-            //firewallConfig = FirewallConfig.parseFrom(byteString);
-            
             byte[] byteArr = Base64.decode(serializedFirewallConfigProto, Base64.DEFAULT);
             firewallConfig = FirewallConfig.parseFrom(byteArr);
         } catch (InvalidProtocolBufferException ex) {
@@ -55,7 +51,6 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
             Log.d(TAG, "Writing the Firewall Config File");
             for(Rule rule: firewallConfig.getRuleList()) {
                 Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
-                Log.d(TAG, "Action = " + rule.getAction().getActionType() + ":params: const = " + rule.getAction().getParam().getConstantValue() + ": delay = " + rule.getAction().getParam().getDelay() + ": mean = " + rule.getAction().getParam().getPerturb().getMean());
             }
         }
 
