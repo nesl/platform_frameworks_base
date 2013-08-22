@@ -120,6 +120,14 @@ sensors_enable_sensor(JNIEnv *env, jclass clazz,
     } else {
         res = queue->disableSensor(sensor);
     }
+
+    // test send data to the other end of the pipe
+    ASensorEvent event;
+    event.sensor = 123;
+    event.version = 555;
+    status_t res = queue->write(&event, 1); 
+    ALOGD("send result = %d", res);
+
     return res == NO_ERROR ? true : false;
 }
 
