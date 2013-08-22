@@ -125,8 +125,8 @@ sensors_enable_sensor(JNIEnv *env, jclass clazz,
     ASensorEvent event;
     event.sensor = 123;
     event.version = 555;
-    status_t res = queue->write(&event, 1); 
-    ALOGD("send result = %d", res);
+    status_t res_send = queue->write(&event, 1); 
+    ALOGD("send result = %d", res_send);
 
     return res == NO_ERROR ? true : false;
 }
