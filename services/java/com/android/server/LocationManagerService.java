@@ -2073,13 +2073,36 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
         } 
    } 
 
-    public void reloadConfig() {
-        byte[] rawFirewallConfigBytes = readFirewallConfig();
+    public void parseFirewallConfigToHashMap(FirewallConfig firewallConfig) {
+        for(Rule rule: firewallConfig.getRuleList()) {
+            RuleKey ruleKey = new RuleKey(rule.getSensorType(), rule.getPkgUid(), rule.getPkgName());
+            Rule temp = Rule.newBuilder(rule).build();
+            mPrivacyRules.put(ruleKey, temp);
+        }    
+    }
 
+    public void printFirewallConfigHashMap() {
+        Log.d(TAG, "============ Printing FirewallConfig =============");
+       for(RuleKey ruleKey : mPrivacyRules.keySet()) {
+           Rule rule = mPrivacyRules.get(ruleKey);
+           Log.d(TAG, "ruleName = " + rule.getRuleName() + "pkgName = " + rule.getPkgName() + "action = " + rule.getAction().getActionType().getNumber());
+       } 
+        Log.d(TAG, "============ Done Printing FirewallConfig =============");
+    }
+
+    public void reloadConfig() {
+        //Log.d(TAG, "Inside ReloadConfig");
+        byte[] rawFirewallConfigBytes = readFirewallConfig();
         // clear the entries of the hashmap
         mPrivacyRules.clear();
-
-        Log.d(TAG, "Inside ReloadConfig");
+        try {
+            FirewallConfig firewallConfig = FirewallConfig.parseFrom(rawFirewallConfigBytes);
+            parseFirewallConfigToHashMap(firewallConfig);
+        }
+        catch (InvalidProtocolBufferException ex) {
+            Log.e(TAG, "Unable to parse the firewallConfig string");
+        }
+        printFirewallConfigHashMap();
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.channels.FileLock;
 
 import android.os.Binder;
+import android.os.IBinder;
 import android.os.IFirewallConfigService;
 import android.os.RemoteException;
 
@@ -117,7 +118,15 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
         Log.d(TAG, "Calling reloadConfig.");
         sensorManager.reloadConfig();
         try {
-        	mLocationService.reloadConfig();
+            IBinder binder = android.os.ServiceManager.getService(mContext.LOCATION_SERVICE);
+            if(binder != null) {
+                mLocationService = ILocationManager.Stub.asInterface(binder);
+                Log.d(TAG, "Calling LocationService reloadConfig");
+        	    mLocationService.reloadConfig();
+            }
+            else {
+                Log.e(TAG, "LocationManagerService binder is null");
+            }
         } 
         catch (RemoteException ex) {
         	Log.e(TAG, "Unable to invoke reloadConfig on LocationManagerService");
