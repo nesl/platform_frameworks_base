@@ -82,13 +82,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import android_sensorfirewall.FirewallConfigMessages.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+
 /**
  * The service class that manages LocationProviders and issues location
  * updates and alerts.
  */
 public class LocationManagerService extends ILocationManager.Stub implements Runnable {
     private static final String TAG = "LocationManagerService";
-    public static final boolean D = false;
+    public static final boolean D = true;
 
     private static final String WAKELOCK_KEY = TAG;
     private static final String THREAD_NAME = TAG;
@@ -181,6 +187,9 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
 
     // current active user on the device - other users are denied location data
     private int mCurrentUserId = UserHandle.USER_OWNER;
+
+    // hashmap for storing the firewall config rules
+    private HashMap<RuleKey, Rule> mPrivacyRules = new HashMap<RuleKey, Rule>();
 
     public LocationManagerService(Context context) {
         super();
@@ -1998,6 +2007,79 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             Slog.d(TAG, log);
         }
+    }
+
+    private byte[] readFirewallConfig() {
+        final String fileName = "/data/firewall-config"; 
+        byte[] buf; 
+        try { 
+            File file = new File(fileName); 
+            BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file)); 
+            if (file.length() > Integer.MAX_VALUE) { 
+                Log.e(TAG, "Unable to read " + fileName + ". File too large"); 
+            } 
+            buf = new byte[(int) file.length()]; 
+            inStream.read(buf, 0, (int) file.length()); 
+            inStream.close(); 
+        } 
+        catch (Exception e) { 
+            Log.e(TAG, "Unable to read firewall-config file"); 
+            buf = new byte[0]; // return empty data 
+        } 
+        return buf; 
+    }
+  
+   private class RuleKey {
+        int mSensorType;
+        int mPkgUid;
+        String mPkgName;
+
+        RuleKey(int sensorType, int pkgID, String pkgName) {
+            mSensorType = sensorType;
+            mPkgUid = pkgID;
+            mPkgName = pkgName;
+        }
+
+        @Override
+        public int hashCode() { 
+            final int prime = 31; 
+            int result = 1; 
+            result = prime * result + ((mPkgName == null) ? 0 : mPkgName.hashCode()); 
+            result = prime * result + mPkgUid; 
+            result = prime * result + mSensorType; 
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) { 
+            if (this == obj) 
+                return true; 
+            if (obj == null) 
+                return false; 
+            if (getClass() != obj.getClass()) 
+                return false; 
+            RuleKey other = (RuleKey) obj; 
+            if (mPkgName == null) { 
+                if (other.mPkgName != null) 
+                    return false; 
+            } 
+            else if (!mPkgName.equals(other.mPkgName)) 
+                return false; 
+            if (mPkgUid != other.mPkgUid) 
+                return false; 
+            if (mSensorType != other.mSensorType) 
+                return false; 
+            return true; 
+        } 
+   } 
+
+    public void reloadConfig() {
+        byte[] rawFirewallConfigBytes = readFirewallConfig();
+
+        // clear the entries of the hashmap
+        mPrivacyRules.clear();
+
+        Log.d(TAG, "Inside ReloadConfig");
     }
 
     @Override

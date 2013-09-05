@@ -89,5 +89,6 @@ interface ILocationManager
     // for reporting callback completion
     void locationCallbackFinished(ILocationListener listener);
 
-
+    // for signaling new privacy rules to load
+    void reloadConfig();
 }

@@ -13,16 +13,20 @@ import java.nio.channels.FileLock;
 
 import android.os.Binder;
 import android.os.IFirewallConfigService;
+import android.os.RemoteException;
 
 //import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import android_sensorfirewall.FirewallConfigMessages.*;
+import android.location.ILocationManager;
 
 public class FirewallConfigService extends IFirewallConfigService.Stub {
     private static final String TAG = "FirewallConfigService";
     private static final String kConfigFilename = "/data/firewall-config";
     private Context mContext;
+    private ILocationManager mLocationService;
+    
 
     /**
      * @hide The right way to get an instance is via getSystemService(...)
@@ -112,5 +116,11 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
                 (SensorManager)mContext.getSystemService(serviceName);
         Log.d(TAG, "Calling reloadConfig.");
         sensorManager.reloadConfig();
+        try {
+        	mLocationService.reloadConfig();
+        } 
+        catch (RemoteException ex) {
+        	Log.e(TAG, "Unable to invoke reloadConfig on LocationManagerService");
+        }
     }
 }
