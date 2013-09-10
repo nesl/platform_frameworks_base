@@ -16044,6 +16044,21 @@ package android.os {
     method public static synchronized android.os.FirewallConfigManager getFirewallConfigManager();
     method public android.os.IFirewallConfigService getFirewallConfigService();
     method public void setFirewallConfig(java.lang.String);
+    field public static final int TYPE_ACCELEROMETER = 1; // 0x1
+    field public static final int TYPE_ALL = -1; // 0xffffffff
+    field public static final int TYPE_AMBIENT_TEMPERATURE = 13; // 0xd
+    field public static final int TYPE_GPS = 30; // 0x1e
+    field public static final int TYPE_GRAVITY = 9; // 0x9
+    field public static final int TYPE_GYROSCOPE = 4; // 0x4
+    field public static final int TYPE_LIGHT = 5; // 0x5
+    field public static final int TYPE_LINEAR_ACCELERATION = 10; // 0xa
+    field public static final int TYPE_MAGNETIC_FIELD = 2; // 0x2
+    field public static final int TYPE_ORIENTATION = 3; // 0x3
+    field public static final int TYPE_PRESSURE = 6; // 0x6
+    field public static final int TYPE_PROXIMITY = 8; // 0x8
+    field public static final int TYPE_RELATIVE_HUMIDITY = 12; // 0xc
+    field public static final int TYPE_ROTATION_VECTOR = 11; // 0xb
+    field public static final int TYPE_TEMPERATURE = 7; // 0x7
   }
 
   public class Handler {

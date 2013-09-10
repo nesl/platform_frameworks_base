@@ -87,6 +87,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.File;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import android.os.FirewallConfigManager;
 
 /**
  * The service class that manages LocationProviders and issues location
@@ -144,6 +145,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
     private LocationWorkerHandler mLocationHandler;
     private PassiveProvider mPassiveProvider;  // track passive provider for special cases
     private LocationBlacklist mBlacklist;
+    private FirewallConfigManager mFirewallConfigManager;
 
     // --- fields below are protected by mWakeLock ---
     private int mPendingBroadcasts;
@@ -220,6 +222,8 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
         PowerManager powerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_KEY);
         mPackageManager = mContext.getPackageManager();
+    
+        mFirewallConfigManager = (FirewallConfigManager)mContext.getSystemService(Context.FIREWALLCONFIG_SERVICE);
 
         mBlacklist = new LocationBlacklist(mContext, mLocationHandler);
         mBlacklist.init();
@@ -1588,6 +1592,8 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
 
         return true;
     }
+    SensorPerturb mSensorPerturb = new SensorPerturb();
+    private final int TYPE_GPS = mFirewallConfigManager.TYPE_GPS; 
 
     private void handleLocationChangedLocked(Location location, boolean passive) {
         if (D) Log.d(TAG, "incoming location: " + location);
@@ -1663,6 +1669,9 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             } else {
                 notifyLocation = lastLocation;  // use fine location
             }
+            RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
+            Rule rule = mPrivacyRules.get(ruleKey);
+            notifyLocation = mSensorPerturb.transformData(notifyLocation, rule);
             if (notifyLocation != null) {
                 Location lastLoc = r.mLastFixBroadcast;
                 if ((lastLoc == null) || shouldBroadcastSafe(notifyLocation, lastLoc, r, now)) {
@@ -1672,18 +1681,22 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
                     } else {
                         lastLoc.set(notifyLocation);
                     }
-                    if (!receiver.callLocationChangedLocked(notifyLocation)) {
-                        Slog.w(TAG, "RemoteException calling onLocationChanged on " + receiver);
-                        receiverDead = true;
+                    Log.d(TAG, "pkgName = " + receiver.mPackageName + ": uid = " + receiver.mUid);
+                    if(receiver.mPackageName == "edu.ucla.ee.nesl.testgps") {
+                    } 
+                    else {
+                        if (!receiver.callLocationChangedLocked(notifyLocation)) {
+                            Slog.w(TAG, "RemoteException calling onLocationChanged on " + receiver);
+                            receiverDead = true;
+                        }
+                        r.mRequest.decrementNumUpdates();
                     }
-                    r.mRequest.decrementNumUpdates();
                 }
             }
 
             long prevStatusUpdateTime = r.mLastStatusBroadcast;
             if ((newStatusUpdateTime > prevStatusUpdateTime) &&
                     (prevStatusUpdateTime != 0 || status != LocationProvider.AVAILABLE)) {
-
                 r.mLastStatusBroadcast = newStatusUpdateTime;
                 if (!receiver.callStatusChangedLocked(provider, status, extras)) {
                     receiverDead = true;
