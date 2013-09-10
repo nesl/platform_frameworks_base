@@ -1672,6 +1672,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
             Rule rule = mPrivacyRules.get(ruleKey);
             notifyLocation = mSensorPerturb.transformData(notifyLocation, rule);
+
             if (notifyLocation != null) {
                 Location lastLoc = r.mLastFixBroadcast;
                 if ((lastLoc == null) || shouldBroadcastSafe(notifyLocation, lastLoc, r, now)) {
@@ -1681,16 +1682,11 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
                     } else {
                         lastLoc.set(notifyLocation);
                     }
-                    Log.d(TAG, "pkgName = " + receiver.mPackageName + ": uid = " + receiver.mUid);
-                    if(receiver.mPackageName == "edu.ucla.ee.nesl.testgps") {
-                    } 
-                    else {
-                        if (!receiver.callLocationChangedLocked(notifyLocation)) {
-                            Slog.w(TAG, "RemoteException calling onLocationChanged on " + receiver);
-                            receiverDead = true;
-                        }
-                        r.mRequest.decrementNumUpdates();
+                    if (!receiver.callLocationChangedLocked(notifyLocation)) {
+                        Slog.w(TAG, "RemoteException calling onLocationChanged on " + receiver);
+                        receiverDead = true;
                     }
+                    r.mRequest.decrementNumUpdates();
                 }
             }
 
