@@ -95,7 +95,7 @@ import android.os.FirewallConfigManager;
  */
 public class LocationManagerService extends ILocationManager.Stub implements Runnable {
     private static final String TAG = "LocationManagerService";
-    public static final boolean D = true;
+    public static final boolean D = false;
 
     private static final String WAKELOCK_KEY = TAG;
     private static final String THREAD_NAME = TAG;
@@ -2111,7 +2111,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
         catch (InvalidProtocolBufferException ex) {
             Log.e(TAG, "Unable to parse the firewallConfig string");
         }
-        printFirewallConfigHashMap();
+        //printFirewallConfigHashMap();
     }
 
     @Override

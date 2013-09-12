@@ -117,19 +117,22 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
                 (SensorManager)mContext.getSystemService(serviceName);
         Log.d(TAG, "Calling reloadConfig.");
         sensorManager.reloadConfig();
-        try {
-            IBinder binder = android.os.ServiceManager.getService(mContext.LOCATION_SERVICE);
-            if(binder != null) {
-                mLocationService = ILocationManager.Stub.asInterface(binder);
-                Log.d(TAG, "Calling LocationService reloadConfig");
-        	    mLocationService.reloadConfig();
-            }
-            else {
-                Log.e(TAG, "LocationManagerService binder is null");
-            }
-        } 
-        catch (RemoteException ex) {
-        	Log.e(TAG, "Unable to invoke reloadConfig on LocationManagerService");
-        }
+
+        // for test purpose, disable the reload config in location service for now
+        
+        // try {
+        //     IBinder binder = android.os.ServiceManager.getService(mContext.LOCATION_SERVICE);
+        //     if(binder != null) {
+        //         mLocationService = ILocationManager.Stub.asInterface(binder);
+        //         Log.d(TAG, "Calling LocationService reloadConfig");
+        // 	    mLocationService.reloadConfig();
+        //     }
+        //     else {
+        //         Log.e(TAG, "LocationManagerService binder is null");
+        //     }
+        // } 
+        // catch (RemoteException ex) {
+        // 	Log.e(TAG, "Unable to invoke reloadConfig on LocationManagerService");
+        // }
     }
 }
