@@ -52,7 +52,7 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
             return;
         }
 
-        TODO: Do some useful parsing, e.g. rewriting of the config.
+        // TODO: Do some useful parsing, e.g. rewriting of the config.
         if(firewallConfig != null) {
             Log.d(TAG, "Writing the Firewall Config File");
             for(Rule rule: firewallConfig.getRuleList()) {
