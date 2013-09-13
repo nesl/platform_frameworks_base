@@ -20,6 +20,7 @@ import android.os.RemoteException;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import android_sensorfirewall.FirewallConfigMessages.*;
+import android_sensorfirewall.FirewallConfigMessages.FirewallConfig;
 import android.location.ILocationManager;
 
 public class FirewallConfigService extends IFirewallConfigService.Stub {
@@ -51,13 +52,13 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
             return;
         }
 
-        // TODO: Do some useful parsing, e.g. rewriting of the config.
-        // if(firewallConfig != null) {
-        //     Log.d(TAG, "Writing the Firewall Config File");
-        //     for(Rule rule: firewallConfig.getRuleList()) {
-        //         Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
-        //     }
-        // }
+        TODO: Do some useful parsing, e.g. rewriting of the config.
+        if(firewallConfig != null) {
+            Log.d(TAG, "Writing the Firewall Config File");
+            for(Rule rule: firewallConfig.getRuleList()) {
+                Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
+            }
+        }
 
         // Serialize the FirewallConfig message to the config file. 
         FileOutputStream outputStream = null;
@@ -120,19 +121,19 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
 
         // for test purpose, disable the reload config in location service for now
         
-        // try {
-        //     IBinder binder = android.os.ServiceManager.getService(mContext.LOCATION_SERVICE);
-        //     if(binder != null) {
-        //         mLocationService = ILocationManager.Stub.asInterface(binder);
-        //         Log.d(TAG, "Calling LocationService reloadConfig");
-        // 	    mLocationService.reloadConfig();
-        //     }
-        //     else {
-        //         Log.e(TAG, "LocationManagerService binder is null");
-        //     }
-        // } 
-        // catch (RemoteException ex) {
-        // 	Log.e(TAG, "Unable to invoke reloadConfig on LocationManagerService");
-        // }
+        try {
+            IBinder binder = android.os.ServiceManager.getService(mContext.LOCATION_SERVICE);
+            if(binder != null) {
+                mLocationService = ILocationManager.Stub.asInterface(binder);
+                Log.d(TAG, "Calling LocationService reloadConfig");
+        	    mLocationService.reloadConfig();
+            }
+            else {
+                Log.e(TAG, "LocationManagerService binder is null");
+            }
+        } 
+        catch (RemoteException ex) {
+        	Log.e(TAG, "Unable to invoke reloadConfig on LocationManagerService");
+        }
     }
 }
