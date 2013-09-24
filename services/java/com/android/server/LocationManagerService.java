@@ -95,7 +95,7 @@ import android.os.FirewallConfigManager;
  */
 public class LocationManagerService extends ILocationManager.Stub implements Runnable {
     private static final String TAG = "LocationManagerService";
-    public static final boolean D = false;
+    public static final boolean D = true;
 
     private static final String WAKELOCK_KEY = TAG;
     private static final String THREAD_NAME = TAG;
@@ -1669,6 +1669,9 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             } else {
                 notifyLocation = lastLocation;  // use fine location
             }
+
+            Log.d(TAG, "we got a new location update here and send it to sensorperturb");
+
             RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
             Rule rule = mPrivacyRules.get(ruleKey);
             notifyLocation = mSensorPerturb.transformData(notifyLocation, rule);
@@ -2100,7 +2103,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
     }
 
     public void reloadConfig() {
-        //Log.d(TAG, "Inside ReloadConfig");
+        Log.d(TAG, "Inside ReloadConfig of LocationManagerService");
         byte[] rawFirewallConfigBytes = readFirewallConfig();
         // clear the entries of the hashmap
         mPrivacyRules.clear();
@@ -2111,7 +2114,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
         catch (InvalidProtocolBufferException ex) {
             Log.e(TAG, "Unable to parse the firewallConfig string");
         }
-        //printFirewallConfigHashMap();
+        printFirewallConfigHashMap();
     }
 
     @Override
