@@ -3,6 +3,7 @@ import android_sensorfirewall.FirewallConfigMessages.*;
 import android.location.Location;
 
 public class SensorPerturb {
+   private static final String TAG = "LocationSensorPerturb";
 
    private Location suppressData(Location notifyLocation, Rule rule) {
        // check date
@@ -15,6 +16,8 @@ public class SensorPerturb {
        VectorValue vectorValue = action.getParam().getConstantValue().getVecVal();
        notifyLocation.setLatitude(vectorValue.getLat());
        notifyLocation.setLongitude(vectorValue.getLon());
+       Log.d(TAG, "set constant lat" + vectorValue.getLat());
+       Log.d(TAG, "set constant lon" + vectorValue.getLon());
        if(vectorValue.hasAccuracy()) {
            notifyLocation.setAccuracy(vectorValue.getAccuracy());
        }
