@@ -1598,6 +1598,11 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
     private void handleLocationChangedLocked(Location location, boolean passive) {
         if (D) Log.d(TAG, "incoming location: " + location);
 
+        RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
+        Rule rule = mPrivacyRules.get(ruleKey);
+        location = mSensorPerturb.transformData(location, rule);
+        Log.d(TAG, "we try to transform the location first here!");
+
         long now = SystemClock.elapsedRealtime();
         String provider = (passive ? LocationManager.PASSIVE_PROVIDER : location.getProvider());
 
@@ -1672,8 +1677,6 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
 
             Log.d(TAG, "we got a new location update here and send it to sensorperturb");
 
-            RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
-            Rule rule = mPrivacyRules.get(ruleKey);
             notifyLocation = mSensorPerturb.transformData(notifyLocation, rule);
 
             if (notifyLocation != null) {
