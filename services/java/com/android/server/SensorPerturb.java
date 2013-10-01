@@ -1,6 +1,9 @@
 package com.android.server;
+
 import android_sensorfirewall.FirewallConfigMessages.*;
 import android.location.Location;
+import android.util.Log;
+import android.util.Slog;
 
 public class SensorPerturb {
    private static final String TAG = "LocationSensorPerturb";
