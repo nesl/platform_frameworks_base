@@ -1946,6 +1946,15 @@ public abstract class Context {
 
     /**
      * Use with {@link #getSystemService} to retrieve a {@link
+     * android.hardware.InferenceManager} for accessing sensors.
+     *
+     * @see #getSystemService
+     * @see android.hardware.InferneceManager
+     */
+    public static final String INFERENCE_SERVICE = "inference";
+
+    /**
+     * Use with {@link #getSystemService} to retrieve a {@link
      * android.os.storage.StorageManager} for accessing system storage
      * functions.
      *

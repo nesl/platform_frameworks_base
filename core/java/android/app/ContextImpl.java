@@ -454,7 +454,12 @@ class ContextImpl extends Context {
                 public Object createService(ContextImpl ctx) {
                     return new SystemSensorManager(ctx.mMainThread.getHandler().getLooper());
                 }});
-
+//***************************************************************************************************//
+        registerService(INFERENCE_SERVICE, new ServiceFetcher() {
+                public Object createService(ContextImpl ctx) {
+                    return new InferenceManager(ctx.mMainThread.getHandler().getLooper());
+                }});
+//***************************************************************************************************//
         registerService(STATUS_BAR_SERVICE, new ServiceFetcher() {
                 public Object createService(ContextImpl ctx) {
                     return new StatusBarManager(ctx.getOuterContext());
