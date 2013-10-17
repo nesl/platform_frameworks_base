@@ -5439,6 +5439,7 @@ package android.content {
     field public static final java.lang.String DOWNLOAD_SERVICE = "download";
     field public static final java.lang.String DROPBOX_SERVICE = "dropbox";
     field public static final java.lang.String FIREWALLCONFIG_SERVICE = "firewallconfigservice";
+    field public static final java.lang.String INFERENCE_SERVICE = "inference";
     field public static final java.lang.String INPUT_METHOD_SERVICE = "input_method";
     field public static final java.lang.String INPUT_SERVICE = "input";
     field public static final java.lang.String KEYGUARD_SERVICE = "keyguard";
@@ -10089,10 +10090,6 @@ package android.hardware {
 
 }
 
-paclage android.inference {
-    //need to add interfaces in the inference package here!!
-}
-
 package android.hardware.display {
 
   public final class DisplayManager {
@@ -10263,6 +10260,29 @@ package android.hardware.usb {
     method public boolean initialize(android.hardware.usb.UsbDeviceConnection, android.hardware.usb.UsbEndpoint);
     method public boolean queue(java.nio.ByteBuffer, int);
     method public void setClientData(java.lang.Object);
+  }
+
+}
+
+package android.inference {
+
+  public class InferenceEvent {
+    ctor public InferenceEvent();
+    field public java.lang.String label;
+    field public long timestamp;
+  }
+
+  public abstract interface InferenceEventListener {
+    method public abstract void onInferenceChanged(android.inference.InferenceEvent);
+  }
+
+  public class InferenceManager {
+    ctor public InferenceManager(android.os.Looper);
+    method public boolean registerListener(android.inference.InferenceEventListener);
+    method public boolean registerListener(android.inference.InferenceEventListener, android.os.Handler);
+    field public static final java.lang.String RUNNING = "running";
+    field public static final java.lang.String STILL = "still";
+    field public static final java.lang.String WALKING = "walking";
   }
 
 }

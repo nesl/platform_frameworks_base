@@ -48,6 +48,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.ISerialManager;
 import android.hardware.SensorManager;
+import android.inference.InferenceManager;
 import android.hardware.SerialManager;
 import android.hardware.SystemSensorManager;
 import android.hardware.display.DisplayManager;
