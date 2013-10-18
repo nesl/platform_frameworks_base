@@ -1797,6 +1797,8 @@ public abstract class Context {
      * @see android.app.SearchManager
      * @see #SENSOR_SERVICE
      * @see android.hardware.SensorManager
+     * @see #INFERENCE_SERVICE
+     * @see android.inference.InferenceManager
      * @see #STORAGE_SERVICE
      * @see android.os.storage.StorageManager
      * @see #VIBRATOR_SERVICE
@@ -1946,10 +1948,10 @@ public abstract class Context {
 
     /**
      * Use with {@link #getSystemService} to retrieve a {@link
-     * android.hardware.InferenceManager} for accessing sensors.
+     * android.inference.InferenceManager} for accessing sensors.
      *
      * @see #getSystemService
-     * @see android.hardware.InferneceManager
+     * @see android.inference.InferenceManager
      */
     public static final String INFERENCE_SERVICE = "inference";
 
