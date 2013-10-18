@@ -1,0 +1,16 @@
+package com.android.server;
+
+import android.content.Context;
+import android.util.Log;
+
+
+public class InferenceService extends IInferenceService.Stub{
+	private Context mContext;
+    public InferenceService(Context context) {
+        mContext = context;
+    }
+    
+    public void setModel(String serializedClassifier) {
+    	Log.d("InferenceService", "get classifier=" + serializedClassifier);
+    }
+}

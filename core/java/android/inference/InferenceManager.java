@@ -1,15 +1,21 @@
 package android.inference;
 
-import android.os.Looper;
-import android.os.Process;
-import android.os.Handler;
-import android.os.Message;
 import java.util.ArrayList;
+
+import android.os.FirewallConfigManager;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.IFirewallConfigService;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
+import android.util.Log;
 
 public class InferenceManager {
     final Looper mMainLooper;
     static final ArrayList<ListenerDelegate> mListeners = new ArrayList<ListenerDelegate>();
-
+    private final IInferenceService mInferenceService;
+    
 	public final static String STILL = "still";
 	public final static String WALKING = "walking";
 	public final static String RUNNING = "running";
@@ -46,7 +52,25 @@ public class InferenceManager {
 
 	public InferenceManager(Looper mainLooper) {
     	mMainLooper = mainLooper;
+    	IBinder binder = android.os.ServiceManager.getService("firewallconfigservice");
+        if(binder != null) {
+        	mInferenceService = IInferenceService.Stub.asInterface(binder);
+        } else {
+        	mInferenceService = null;
+            Log.e("InferenceManager", "IInferenceService binder is null");
+        }
     }
+	
+	public void setModel(String model) {
+		try {
+			mInferenceService.setModel("MODEL");
+		}
+		catch (Exception ex) {
+			 Log.e("InferenceManager", "Failed to call InferenceService from InferenceManager");
+			 ex.printStackTrace();
+		}
+		
+	}
 
     public boolean registerListener(InferenceEventListener listener) {
     	return registerListener(listener, null);

@@ -13,7 +13,6 @@ import java.nio.channels.FileLock;
 
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.IFirewallConfigService;
 import android.os.RemoteException;
 
 //import com.google.protobuf.ByteString;

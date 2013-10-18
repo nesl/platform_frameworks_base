@@ -746,6 +746,14 @@ class ServerThread extends Thread {
                 reportWtf("starting FirewallConfigService service", e);
             }
             
+            try {
+                Slog.i(TAG, "Inference Service");
+                //TODO(cgshen): Register the service into ContextImpl.
+                ServiceManager.addService("inferenceservice", new InferenceService(context));
+            } catch (Throwable e) {
+                reportWtf("starting InferenceService service", e);
+            }
+            
             if (context.getResources().getBoolean(
                     com.android.internal.R.bool.config_dreamsSupported)) {
                 try {

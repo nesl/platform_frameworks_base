@@ -10266,6 +10266,17 @@ package android.hardware.usb {
 
 package android.inference {
 
+  public abstract interface IInferenceService implements android.os.IInterface {
+    method public abstract void setModel(java.lang.String) throws android.os.RemoteException;
+  }
+
+  public static abstract class IInferenceService.Stub extends android.os.Binder implements android.inference.IInferenceService {
+    ctor public IInferenceService.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.inference.IInferenceService asInterface(android.os.IBinder);
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
+  }
+
   public class InferenceEvent {
     ctor public InferenceEvent();
     field public java.lang.String label;
@@ -10280,6 +10291,7 @@ package android.inference {
     ctor public InferenceManager(android.os.Looper);
     method public boolean registerListener(android.inference.InferenceEventListener);
     method public boolean registerListener(android.inference.InferenceEventListener, android.os.Handler);
+    method public void setModel(java.lang.String);
     field public static final java.lang.String RUNNING = "running";
     field public static final java.lang.String STILL = "still";
     field public static final java.lang.String WALKING = "walking";
