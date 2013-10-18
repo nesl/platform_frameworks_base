@@ -2,6 +2,7 @@ package com.android.server;
 
 import android.content.Context;
 import android.util.Log;
+import android.inference.IInferenceService;
 
 
 public class InferenceService extends IInferenceService.Stub{
