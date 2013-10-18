@@ -2,10 +2,8 @@ package android.inference;
 
 import java.util.ArrayList;
 
-import android.os.FirewallConfigManager;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.IFirewallConfigService;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
@@ -52,7 +50,7 @@ public class InferenceManager {
 
 	public InferenceManager(Looper mainLooper) {
     	mMainLooper = mainLooper;
-    	IBinder binder = android.os.ServiceManager.getService("firewallconfigservice");
+    	IBinder binder = android.os.ServiceManager.getService("inferenceservice");
         if(binder != null) {
         	mInferenceService = IInferenceService.Stub.asInterface(binder);
         } else {
@@ -62,12 +60,14 @@ public class InferenceManager {
     }
 	
 	public void setModel(String model) {
+		Log.d("InferenceManager", "set model to InferenceService");
 		try {
-			mInferenceService.setModel("MODEL");
+			mInferenceService.setModel(model);
 		}
 		catch (Exception ex) {
 			 Log.e("InferenceManager", "Failed to call InferenceService from InferenceManager");
-			 ex.printStackTrace();
+			 Log.e("InferenceManager", ex.toString());
+			 //ex.printStackTrace();
 		}
 		
 	}

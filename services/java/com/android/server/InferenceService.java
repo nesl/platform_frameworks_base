@@ -9,6 +9,7 @@ public class InferenceService extends IInferenceService.Stub{
 	private Context mContext;
     public InferenceService(Context context) {
         mContext = context;
+        Log.d("InferenceService", "InferenceService started!");
     }
     
     public void setModel(String serializedClassifier) {
