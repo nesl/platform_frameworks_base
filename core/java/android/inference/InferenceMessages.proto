@@ -1,0 +1,22 @@
+package android_inference;
+
+
+option optimize_for = LITE_RUNTIME;
+
+message DataSourceMessage {
+	required int32 sensorType = 1;
+	required int32 rate = 2;
+}
+
+message FeatureMessage {
+
+}
+
+message ClassifierMessage {
+	required string model = 1;
+}
+
+message InferenceConfigMessage {
+    repeated FeatureMessage features = 1;
+    required ClassifierMessage classifier = 2;
+}
