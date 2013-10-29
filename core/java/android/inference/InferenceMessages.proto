@@ -1,6 +1,5 @@
 package android_inference;
 
-
 option optimize_for = LITE_RUNTIME;
 
 message DataSourceMessage {
@@ -9,14 +8,23 @@ message DataSourceMessage {
 }
 
 message FeatureMessage {
-
+	required DataSourceMessage source = 1;
+	required int32 type = 2;
+	required int32 windowSize = 3;
+	optional int32 fftSubBand = 4;
 }
 
 message ClassifierMessage {
 	required string model = 1;
+	repeated FeatureMessage input = 2;
+}
+
+message ExecParamMessage {
+	required int32 priority = 1;
+	required int32 target = 2;
 }
 
 message InferenceConfigMessage {
-    repeated FeatureMessage features = 1;
-    required ClassifierMessage classifier = 2;
+    required ClassifierMessage classifier = 1;
+    required ExecParamMessage param = 2; 
 }

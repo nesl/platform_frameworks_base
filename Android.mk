@@ -47,6 +47,9 @@ LOCAL_SRC_FILES := $(filter-out \
 			org/mobilecontrol/% \
 			,$(LOCAL_SRC_FILES))
 
+
+LOCAL_SRC_FILES += \
+	core/java/android/inference/InferenceMessages.proto
 ## READ ME: ########################################################
 ##
 ## When updating this list of aidl files, consider if that aidl is
@@ -237,7 +240,7 @@ LOCAL_INTERMEDIATE_SOURCES := \
 			$(framework_res_source_path)/com/android/internal/R.java
 
 LOCAL_NO_STANDARD_LIBRARIES := true
-LOCAL_JAVA_LIBRARIES := bouncycastle core core-junit ext
+LOCAL_JAVA_LIBRARIES := bouncycastle core core-junit ext libprotobuf-java-2.3.0-lite
 
 LOCAL_MODULE := framework
 LOCAL_MODULE_CLASS := JAVA_LIBRARIES
