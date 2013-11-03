@@ -131,9 +131,11 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
     if (queue == 0) return -1;
 
     status_t res;
-    ASensorEvent event;
+    ASensorEvent event = {0, };
+    ASensorEvent event_tmp;
 
     res = queue->read(&event, 1);
+    ALOGD("IPS: read complete");
     if (res == 0) {
         res = queue->waitForEvent();
         if (res != NO_ERROR)
@@ -146,6 +148,14 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
         return -1;
     }
 
+    event_tmp = event;
+    event_tmp.timestamp += 2;
+    ALOGD("IPS: event type %d time stamp = %ld", event_tmp.type, event_tmp.timestamp);
+    res = queue->write(&event_tmp, 1, true);
+    if (res > 0)
+        ALOGD("IPS: sensormanager write succeeded");
+    else
+        ALOGD("IPS: sensormanager write failed");
     jint accuracy = event.vector.status;
     env->SetFloatArrayRegion(values, 0, 3, event.vector.v);
     env->SetIntArrayRegion(status, 0, 1, &accuracy);
