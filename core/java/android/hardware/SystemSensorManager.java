@@ -101,7 +101,7 @@ public class SystemSensorManager extends SensorManager {
             }
 
             public void run() {
-                //Log.d(TAG, "entering main sensor thread");
+                Log.d(TAG, "entering main sensor thread");
                 final float[] values = new float[3];
                 final int[] status = new int[1];
                 final long timestamp[] = new long[1];
@@ -153,7 +153,7 @@ public class SystemSensorManager extends SensorManager {
                         }
                     }
                 }
-                //Log.d(TAG, "exiting main sensor thread");
+                Log.d(TAG, "exiting main sensor thread");
             }
         }
     }
@@ -254,7 +254,6 @@ public class SystemSensorManager extends SensorManager {
         synchronized(sListeners) {
             if (!sSensorModuleInitialized) {
                 sSensorModuleInitialized = true;
-
                 nativeClassInit();
 
                 // initialize the sensor list
@@ -392,6 +391,13 @@ public class SystemSensorManager extends SensorManager {
         sensors_reload_config();
     }
 
+    /** @hide */
+    @Override
+    protected void sendEventsImpl(int type) {
+	Log.d(TAG, "SensorManager::sendEventsImpl");
+	sensor_send_events(sQueue, type);
+    }
+
     private static native void nativeClassInit();
 
     private static native int sensors_module_init();
@@ -404,4 +410,5 @@ public class SystemSensorManager extends SensorManager {
     static native int sensors_data_poll(int queue, float[] values, int[] status, long[] timestamp);
 
     static native void sensors_reload_config();
+    static native boolean sensor_send_events(int queue, int type);
 }

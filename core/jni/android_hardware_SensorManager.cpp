@@ -148,20 +148,34 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
         return -1;
     }
 
-    event_tmp = event;
-    event_tmp.timestamp += 2;
-    ALOGD("IPS: event type %d time stamp = %ld", event_tmp.type, event_tmp.timestamp);
-    res = queue->write(&event_tmp, 1, true);
-    if (res > 0)
-        ALOGD("IPS: sensormanager write succeeded");
-    else
-        ALOGD("IPS: sensormanager write failed");
     jint accuracy = event.vector.status;
     env->SetFloatArrayRegion(values, 0, 3, event.vector.v);
     env->SetIntArrayRegion(status, 0, 1, &accuracy);
     env->SetLongArrayRegion(timestamp, 0, 1, &event.timestamp);
 
     return event.sensor;
+}
+
+static jboolean
+sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
+		    jint type)
+{
+    int res;
+    int s_type = (int) type;
+    sp<SensorEventQueue> queue(reinterpret_cast<SensorEventQueue *>(nativeQueue));
+    if (queue == 0) return -1;
+
+    ASensorEvent event_tmp;
+
+    event_tmp.type = s_type;
+    ALOGD("IPS: sending event type %d", event_tmp.type);
+    res = queue->write(&event_tmp, 1, true);
+    if (res > 0)
+        ALOGD("IPS: sensormanager write succeeded");
+    else
+        ALOGD("IPS: sensormanager write failed");
+    
+    return true;
 }
 
 static void
@@ -194,6 +208,8 @@ static JNINativeMethod gMethods[] = {
     {"sensors_data_poll",  "(I[F[I[J)I",    (void*)sensors_data_poll },
 
     {"sensors_reload_config", "()V",        (void*)sensors_reload_config },
+
+    {"sensors_send_events", "()V",          (void*)sensors_send_events },
 };
 
 }; // namespace android
