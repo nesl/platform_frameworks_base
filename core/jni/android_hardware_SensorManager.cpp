@@ -209,7 +209,7 @@ static JNINativeMethod gMethods[] = {
 
     {"sensors_reload_config", "()V",        (void*)sensors_reload_config },
 
-    {"sensors_send_events", "(I;I)I",          (void*)sensors_send_events },
+    {"sensors_send_events", "(II)I",          (void*)sensors_send_events },
 };
 
 }; // namespace android

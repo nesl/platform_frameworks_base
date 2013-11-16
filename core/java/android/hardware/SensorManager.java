@@ -656,8 +656,9 @@ public abstract class SensorManager {
     }
 
     public int sendEvents(int type) {
-	Log.d(TAG, "SensorManager::sendEvents");
+	Log.d(TAG, "SensorManager::sendEvents type " + type);
 	sendEventsImpl(type);
+	return 0;
     }
 
     /** @hide */
