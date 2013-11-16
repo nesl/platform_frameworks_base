@@ -156,7 +156,7 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
     return event.sensor;
 }
 
-static jboolean
+static jint
 sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
 		    jint type)
 {
@@ -175,7 +175,7 @@ sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
     else
         ALOGD("IPS: sensormanager write failed");
     
-    return true;
+    return 0;
 }
 
 static void
@@ -209,7 +209,7 @@ static JNINativeMethod gMethods[] = {
 
     {"sensors_reload_config", "()V",        (void*)sensors_reload_config },
 
-    {"sensors_send_events", "()V",          (void*)sensors_send_events },
+    {"sensors_send_events", "(I;I)I",          (void*)sensors_send_events },
 };
 
 }; // namespace android
