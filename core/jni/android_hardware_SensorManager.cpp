@@ -182,6 +182,22 @@ sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
 
     ALOGD("IPS: sensor verson %d type = %d timestamp = %ld status = %d", event.version,
             event.type, event.timestamp, event.vector.status);
+
+    // Get the float[] values
+    jobject valuesObj = env->GetObjectField(sensorEvent, seOffsets.values);
+    jfloatArray *farr = reinterpret_cast<jfloatArray *>(&valuesObj);
+    float *values     = env->GetFloatArrayElements(*farr, NULL);
+
+    if (values == NULL) {
+        ALOGD("vector values is NULL");
+        return -1;
+    }
+    event.vector.v[0] = values[0];
+    event.vector.v[1] = values[1];
+    event.vector.v[2] = values[2];
+
+    ALOGD("IPS: float values %f %f %f", values[0], values[1], values[2]);
+
     res = queue->write(&event, 1, true);
     if (res > 0)
         ALOGD("IPS: sensormanager write succeeded");
