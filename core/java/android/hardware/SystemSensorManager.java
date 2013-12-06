@@ -393,9 +393,8 @@ public class SystemSensorManager extends SensorManager {
 
     /** @hide */
     @Override
-    protected int sendEventsImpl(int type) {
-	Log.d(TAG, "SensorManager::sendEventsImpl type " + type);
-	sensors_send_events(sQueue, type);
+    protected int sendEventsImpl(SensorEvent event, Sensor sensor) {
+	sensors_send_events(sQueue, event, sensor);
 	return 0;
     }
 
@@ -411,5 +410,5 @@ public class SystemSensorManager extends SensorManager {
     static native int sensors_data_poll(int queue, float[] values, int[] status, long[] timestamp);
 
     static native void sensors_reload_config();
-    static native int sensors_send_events(int queue, int type);
+    static native int sensors_send_events(int queue, SensorEvent event, Sensor sensor);
 }

@@ -655,9 +655,8 @@ public abstract class SensorManager {
         reloadConfigImpl();
     }
 
-    public int sendEvents(int type) {
-	Log.d(TAG, "SensorManager::sendEvents type " + type);
-	sendEventsImpl(type);
+    public int sendEvents(SensorEvent event, Sensor sensor) {
+	sendEventsImpl(event, sensor);
 	return 0;
     }
 
@@ -665,7 +664,7 @@ public abstract class SensorManager {
     protected abstract void reloadConfigImpl();
 
     /** @hide */
-    protected abstract int sendEventsImpl(int type);
+    protected abstract int sendEventsImpl(SensorEvent event, Sensor sensor);
 
     /**
      * <p>

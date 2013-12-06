@@ -28,6 +28,13 @@
 
 namespace android {
 
+struct SensorEventOffsets
+{
+    jfieldID   values;
+    jfieldID   accuracy;
+    jfieldID   timestamp;
+} gSensorEventOffsets;
+
 struct SensorOffsets
 {
     jfieldID    name;
@@ -158,23 +165,30 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
 
 static jint
 sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
-		    jint type)
+        jobject sensorEvent, jobject sensor)
 {
     int res;
-    int s_type = (int) type;
+
     sp<SensorEventQueue> queue(reinterpret_cast<SensorEventQueue *>(nativeQueue));
     if (queue == 0) return -1;
 
-    ASensorEvent event_tmp;
+    ASensorEvent event;
+    const SensorOffsets& sensorOffsets(gSensorOffsets);
+    event.version   = env->GetIntField(sensor, sensorOffsets.version);
+    event.type      = env->GetIntField(sensor, sensorOffsets.type);
 
-    event_tmp.type = s_type;
-    ALOGD("IPS: sending event type %d", event_tmp.type);
-    res = queue->write(&event_tmp, 1, true);
+    const SensorEventOffsets& seOffsets(gSensorEventOffsets);
+    event.timestamp = env->GetLongField(sensorEvent, seOffsets.timestamp);
+    event.vector.status = env->GetIntField(sensorEvent, seOffsets.accuracy);
+
+    ALOGD("IPS: sensor verson %d type = %d timestamp = %ld status = %d", event.version,
+            event.type, event.timestamp, event.vector.status);
+    res = queue->write(&event, 1, true);
     if (res > 0)
         ALOGD("IPS: sensormanager write succeeded");
     else
         ALOGD("IPS: sensormanager write failed");
-    
+
     return 0;
 }
 
@@ -192,6 +206,12 @@ nativeClassInit (JNIEnv *_env, jclass _this)
     sensorOffsets.resolution  = _env->GetFieldID(sensorClass, "mResolution","F");
     sensorOffsets.power       = _env->GetFieldID(sensorClass, "mPower",     "F");
     sensorOffsets.minDelay    = _env->GetFieldID(sensorClass, "mMinDelay",  "I");
+
+    jclass sensorEventClass = _env->FindClass("android/hardware/SensorEvent");
+    SensorEventOffsets& seOffsets = gSensorEventOffsets;
+    seOffsets.values     = _env->GetFieldID(sensorEventClass, "values",    "[F");
+    seOffsets.accuracy   = _env->GetFieldID(sensorEventClass, "accuracy",  "I");
+    seOffsets.timestamp  = _env->GetFieldID(sensorEventClass, "timestamp", "J");
 }
 
 static JNINativeMethod gMethods[] = {
@@ -209,7 +229,7 @@ static JNINativeMethod gMethods[] = {
 
     {"sensors_reload_config", "()V",        (void*)sensors_reload_config },
 
-    {"sensors_send_events", "(II)I",          (void*)sensors_send_events },
+    {"sensors_send_events", "(ILandroid/hardware/SensorEvent;Landroid/hardware/Sensor;)I",  (void*)sensors_send_events },
 };
 
 }; // namespace android
