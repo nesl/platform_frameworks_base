@@ -142,7 +142,6 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
     ASensorEvent event_tmp;
 
     res = queue->read(&event, 1);
-    ALOGD("IPS: read complete");
     if (res == 0) {
         res = queue->waitForEvent();
         if (res != NO_ERROR)
@@ -181,8 +180,6 @@ sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
     event.timestamp = env->GetLongField(sensorEvent, seOffsets.timestamp);
     event.vector.status = env->GetIntField(sensorEvent, seOffsets.accuracy);
 
-    ALOGD("IPS: sensor verson %d type = %d timestamp = %ld status = %d", event.version,
-            event.type, event.timestamp, event.vector.status);
 
     // Get the float[] values
     jobject valuesObj = env->GetObjectField(sensorEvent, seOffsets.values);
@@ -197,13 +194,17 @@ sensors_send_events(JNIEnv *env, jclass clazz, jint nativeQueue,
     event.vector.v[1] = values[1];
     event.vector.v[2] = values[2];
 
-    ALOGD("IPS: float values %f %f %f", values[0], values[1], values[2]);
+    ALOGD("IPS: sensor verson %d type = %d timestamp = %lld status = %d offsets- timestamp %d "
+            "accuracy %d float values %f %f %f",
+            event.version, event.type, event.timestamp, event.vector.status,
+            seOffsets.timestamp, seOffsets.accuracy,
+            values[0], values[1], values[2]);
 
     res = queue->write(&event, 1, true);
     if (res > 0)
         ALOGD("IPS: sensormanager write succeeded");
     else
-        ALOGD("IPS: sensormanager write failed");
+        ALOGD("IPS: sensormanager write failed %d", res);
 
     return 0;
 }
