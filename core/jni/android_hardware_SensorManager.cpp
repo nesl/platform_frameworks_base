@@ -91,12 +91,33 @@ sensors_create_queue(JNIEnv *env, jclass clazz)
     return reinterpret_cast<int>(queue.get());
 }
 
+static jint
+sensors_create_input(JNIEnv *env, jclass clazz)
+{
+    ALOGD("sensors_create_input called");
+    SensorManager& mgr(SensorManager::getInstance());
+    sp<BitTube> channel(mgr.getInputChannel());
+    ALOGD("sensors_create_input, channel=%d", channel.get());
+    channel->incStrong(clazz);
+    ALOGD("sensors_create_input after incStrong");
+    return reinterpret_cast<int>(channel.get());
+}
+
 static void
 sensors_destroy_queue(JNIEnv *env, jclass clazz, jint nativeQueue)
 {
     sp<SensorEventQueue> queue(reinterpret_cast<SensorEventQueue *>(nativeQueue));
     if (queue != 0) {
         queue->decStrong(clazz);
+    }
+}
+
+static void
+sensors_destroy_input(JNIEnv *env, jclass clazz, jint inputChannel)
+{
+    sp<BitTube> channel(reinterpret_cast<BitTube *>(inputChannel));
+    if (channel != 0) {
+        channel->decStrong(clazz);
     }
 }
 
@@ -146,6 +167,37 @@ sensors_data_poll(JNIEnv *env, jclass clazz, jint nativeQueue,
     return event.sensor;
 }
 
+static ssize_t
+sensors_data_push (JNIEnv *env, jclass _this, jint inputChannel,
+        jint sensor, jfloatArray values, jint status, jlong timestamp)
+{
+    sp<BitTube> channel(reinterpret_cast<BitTube *>(inputChannel));
+    if (channel == NULL) {
+        ALOGE("sensors_data_push got null channel");
+        return EINVAL;
+    }
+
+    ASensorEvent event;
+    env->GetFloatArrayRegion(values, 0, 3, event.vector.v);
+    event.vector.status = status;
+    event.timestamp = timestamp;
+    event.sensor = sensor;
+
+    /*
+    event.sensor = SENSOR_TYPE_ACCELEROMETER;
+    event.type = SENSOR_TYPE_ACCELEROMETER;
+    event.acceleration.x = -1.3;
+    event.acceleration.y = 1.8;
+    event.acceleration.z = -0.7;
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    event.timestamp = (int64_t) now.tv_sec*1000000000LL + now.tv_nsec;
+    */
+
+    status_t res;
+    return BitTube::sendObjects(channel, &event, 1);
+}
+
 static void
 nativeClassInit (JNIEnv *_env, jclass _this)
 {
@@ -169,11 +221,14 @@ static JNINativeMethod gMethods[] = {
                                             (void*)sensors_module_get_next_sensor },
 
     {"sensors_create_queue",  "()I",        (void*)sensors_create_queue },
+    {"sensors_create_input",  "()I",        (void*)sensors_create_input },
     {"sensors_destroy_queue", "(I)V",       (void*)sensors_destroy_queue },
+    {"sensors_destroy_input", "(I)V",       (void*)sensors_destroy_input },
     {"sensors_enable_sensor", "(ILjava/lang/String;II)Z",
                                             (void*)sensors_enable_sensor },
 
-    {"sensors_data_poll",  "(I[F[I[J)I",     (void*)sensors_data_poll },
+    {"sensors_data_poll",  "(I[F[I[J)I",    (void*)sensors_data_poll },
+    {"sensors_data_push",  "(II[FIJ)I",     (void*)sensors_data_push },
 };
 
 }; // namespace android

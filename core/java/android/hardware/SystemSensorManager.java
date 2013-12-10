@@ -32,7 +32,7 @@ import java.util.List;
  * Sensor manager implementation that communicates with the built-in
  * system sensors.
  *
- * @hide
+ * removed hide
  */
 public class SystemSensorManager extends SensorManager {
     private static final int SENSOR_DISABLE = -1;
@@ -385,6 +385,13 @@ public class SystemSensorManager extends SensorManager {
         }
     }
 
+    public int pushSensorEvent(int sensor, float[] values, int status, long timestamp) {
+      int channel = sensors_create_input();
+      int numPushed = sensors_data_push(channel, sensor, values, status, timestamp);
+      sensors_destroy_input(channel);
+      return numPushed;
+    }
+
     private static native void nativeClassInit();
 
     private static native int sensors_module_init();
@@ -395,4 +402,8 @@ public class SystemSensorManager extends SensorManager {
     static native void sensors_destroy_queue(int queue);
     static native boolean sensors_enable_sensor(int queue, String name, int sensor, int enable);
     static native int sensors_data_poll(int queue, float[] values, int[] status, long[] timestamp);
+
+    static native int sensors_create_input();
+    static native void sensors_destroy_input(int channel);
+    static native int sensors_data_push(int channel, int sensor, float[] values, int status, long timestamp);
 }
