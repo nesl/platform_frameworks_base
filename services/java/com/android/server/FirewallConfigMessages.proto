@@ -58,7 +58,7 @@ message Action {
     enum ActionType {
         ACTION_SUPPRESS = 1;
         ACTION_CONSTANT = 2;
-        ACTION_DELAY = 3;
+        ACTION_PLAYBACK = 3;
         ACTION_PERTURB = 4;
         ACTION_PASSTHROUGH = 5;
     }   
