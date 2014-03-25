@@ -53,12 +53,12 @@ public class FirewallConfigService extends IFirewallConfigService.Stub {
         }
 
         // TODO: Do some useful parsing, e.g. rewriting of the config.
-        // if(firewallConfig != null) {
-        //     Log.d(TAG, "Writing the Firewall Config File");
-        //     for(Rule rule: firewallConfig.getRuleList()) {
-        //         Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid());
-        //     }
-        // }
+           if(firewallConfig != null) {
+               Log.d(TAG, "Writing the Firewall Config File");
+               for(Rule rule: firewallConfig.getRuleList()) {
+                   Log.d(TAG, "ruleName = " + rule.getRuleName() + ": sensorType = " + rule.getSensorType() + ": pkgName = " + rule.getPkgName() + ": pkgUid = " + rule.getPkgUid() + "action: " + rule.getAction().getActionType().getNumber());
+               }
+           }
 
         // Serialize the FirewallConfig message to the config file. 
         FileOutputStream outputStream = null;
