@@ -400,6 +400,15 @@ public class LocationManager {
         return null;
     }
 
+    public void setLocation(Location l)
+    {
+        Log.d(TAG, "LocationManager::setLocation "+ l.getAltitude());
+        try {
+            mService.setLocation(l);
+        } catch (RemoteException e) {
+            Log.e(TAG, "RemoteException", e);
+        }
+    }
     /**
      * Register for location updates using the named provider, and a
      * pending intent.
@@ -833,6 +842,8 @@ public class LocationManager {
         ListenerTransport transport = wrapListener(listener, looper);
 
         try {
+//          Log.d(TAG, "calling mService.setLocation");
+//          mService.setLocation(new Location("test"));
             mService.requestLocationUpdates(request, transport, intent, packageName);
        } catch (RemoteException e) {
            Log.e(TAG, "RemoteException", e);

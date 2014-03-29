@@ -91,4 +91,7 @@ interface ILocationManager
 
     // for signaling new privacy rules to load
     void reloadConfig();
+
+    // setLocation - used by playback to set the location in playback buffer
+    void setLocation(in Location location);
 }

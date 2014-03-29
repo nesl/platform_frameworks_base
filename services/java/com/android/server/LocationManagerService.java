@@ -1676,7 +1676,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
 
             RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
             Rule rule = mPrivacyRules.get(ruleKey);
-            location = mSensorPerturb.transformData(location, rule);
+//          location = mSensorPerturb.transformData(location, rule);
             Log.d(TAG, "we try to transform the location here!");
             notifyLocation = mSensorPerturb.transformData(notifyLocation, rule);
 
@@ -2119,6 +2119,12 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             Log.e(TAG, "Unable to parse the firewallConfig string");
         }
         printFirewallConfigHashMap();
+    }
+
+    public void setLocation(Location location)
+    {
+        Log.d(TAG, "SetLocation called from LocationManagerService " + location.getAltitude());
+        mSensorPerturb.addLocation(location);
     }
 
     @Override

@@ -10745,6 +10745,7 @@ package android.location {
     method public void requestSingleUpdate(java.lang.String, android.app.PendingIntent);
     method public void requestSingleUpdate(android.location.Criteria, android.app.PendingIntent);
     method public boolean sendExtraCommand(java.lang.String, java.lang.String, android.os.Bundle);
+    method public void setLocation(android.location.Location);
     method public void setTestProviderEnabled(java.lang.String, boolean);
     method public void setTestProviderLocation(java.lang.String, android.location.Location);
     method public void setTestProviderStatus(java.lang.String, int, android.os.Bundle, long);
