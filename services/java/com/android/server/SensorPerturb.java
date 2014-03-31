@@ -45,22 +45,33 @@ public class SensorPerturb {
        return notifyLocation;
    }
 
+   public boolean isActionPlayback(Rule rule) {
+       switch(rule.getAction().getActionType()) {
+           case ACTION_PLAYBACK:
+               return true;
+           default:
+               return false;
+       }
+   }
+
    public Location transformData(Location notifyLocation, Rule rule) {
        if(rule != null) {
            switch(rule.getAction().getActionType()) {
                case ACTION_PLAYBACK:
-                   Log.d(TAG, "Playback called 1 " + notifyLocation.getLongitude());
-                   if (pb_buffer.isEmpty()) {
-                       Log.d(TAG, "pb_buffer is empty");
-                       return null;
-                   } else {
-                       Location l = pb_buffer.remove(0);
-                       notifyLocation.setLatitude(l.getLatitude());
-                       notifyLocation.setAltitude(l.getAltitude());
-                       notifyLocation.setLongitude(l.getLongitude());
-                       Log.d(TAG, "setting log " + notifyLocation.getLongitude());
-                       return notifyLocation;
-                   }
+                   notifyLocation.makeComplete();
+                   return notifyLocation;
+//                 Log.d(TAG, "Playback called 1 " + notifyLocation.getLongitude());
+//                 if (pb_buffer.isEmpty()) {
+//                     Log.d(TAG, "pb_buffer is empty");
+//                     return null;
+//                 } else {
+//                     Location l = pb_buffer.remove(0);
+//                     notifyLocation.setLatitude(l.getLatitude());
+//                     notifyLocation.setAltitude(l.getAltitude());
+//                     notifyLocation.setLongitude(l.getLongitude());
+//                     Log.d(TAG, "setting log " + notifyLocation.getLongitude());
+//                     return notifyLocation;
+//                 }
                case ACTION_SUPPRESS: 
                    return suppressData(notifyLocation, rule);
                case ACTION_PASSTHROUGH:

@@ -1598,13 +1598,21 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
     private void handleLocationChangedLocked(Location location, boolean passive) {
         if (D) Log.d(TAG, "incoming location: " + location);
 
+        Log.d(TAG, "HandleLocationChangedLocked:: P" + location.getProvider());
         long now = SystemClock.elapsedRealtime();
         String provider = (passive ? LocationManager.PASSIVE_PROVIDER : location.getProvider());
 
+        LocationProviderInterface p;
+        if (provider.equals("playback")) {
+            Log.d(TAG, "playback:: changing provider to gps");
+            p = mProvidersByName.get("gps");
+            provider = "gps";
+        } else {
         // Skip if the provider is unknown.
-        LocationProviderInterface p = mProvidersByName.get(provider);
+            Log.d(TAG, "provider: " + provider);
+        p = mProvidersByName.get(provider);
         if (p == null) return;
-
+        }
         // Update last known locations
         Location noGPSLocation = location.getExtraLocation(Location.EXTRA_NO_GPS_LOCATION);
         Location lastNoGPSLocation = null;
@@ -1647,6 +1655,16 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             Receiver receiver = r.mReceiver;
             boolean receiverDead = false;
 
+            RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
+            Rule rule = mPrivacyRules.get(ruleKey);
+            String pro = location.getProvider();
+            if (pro.equals("playback") &&
+                    mSensorPerturb.isActionPlayback(rule)) {
+                Log.d(TAG, "Sending Playback location to " + receiver.mPackageName);
+            } else {
+                Log.d(TAG, "Not sending Playback location to " + receiver.mPackageName);
+                continue;
+            }
             int receiverUserId = UserHandle.getUserId(receiver.mUid);
             if (receiverUserId != mCurrentUserId) {
                 if (D) {
@@ -1670,12 +1688,6 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
                 notifyLocation = lastLocation;  // use fine location
             }
 
-            Log.d(TAG, "we got a new location update here and send it to sensorperturb");
-
-            
-
-            RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
-            Rule rule = mPrivacyRules.get(ruleKey);
 //          location = mSensorPerturb.transformData(location, rule);
             Log.d(TAG, "we try to transform the location here!");
             notifyLocation = mSensorPerturb.transformData(notifyLocation, rule);
@@ -1725,6 +1737,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             }
         }
 
+        Log.i(TAG, "end of sending data");
         // remove dead records and receivers outside the loop
         if (deadReceivers != null) {
             for (Receiver receiver : deadReceivers) {
@@ -2123,8 +2136,13 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
 
     public void setLocation(Location location)
     {
-        Log.d(TAG, "SetLocation called from LocationManagerService " + location.getAltitude());
-        mSensorPerturb.addLocation(location);
+        Log.d(TAG, "SetLocation called:: LocationManagerService " + location.getAltitude());
+        //mSensorPerturb.addLocation(location);
+        location.makeComplete();
+        synchronized (mLock) {
+            handleLocationChangedLocked(location, false);
+        }
+//        reportLocation(location, false);
     }
 
     @Override
