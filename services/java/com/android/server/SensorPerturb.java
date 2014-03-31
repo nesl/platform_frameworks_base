@@ -46,6 +46,11 @@ public class SensorPerturb {
    }
 
    public boolean isActionPlayback(Rule rule) {
+       if (rule == null) {
+           Log.d(TAG, "isActionPlayback: rule is null");
+           return false;
+       } else
+           Log.d(TAG, "isActionPlayback: rule is not null");
        switch(rule.getAction().getActionType()) {
            case ACTION_PLAYBACK:
                return true;

@@ -1596,9 +1596,10 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
     private final int TYPE_GPS = mFirewallConfigManager.TYPE_GPS; 
 
     private void handleLocationChangedLocked(Location location, boolean passive) {
+        boolean playback = false;
         if (D) Log.d(TAG, "incoming location: " + location);
 
-        Log.d(TAG, "HandleLocationChangedLocked:: P" + location.getProvider());
+        Log.d(TAG, "HandleLocationChangedLocked:: p" + location.getProvider());
         long now = SystemClock.elapsedRealtime();
         String provider = (passive ? LocationManager.PASSIVE_PROVIDER : location.getProvider());
 
@@ -1607,6 +1608,7 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             Log.d(TAG, "playback:: changing provider to gps");
             p = mProvidersByName.get("gps");
             provider = "gps";
+            playback = true;
         } else {
         // Skip if the provider is unknown.
             Log.d(TAG, "provider: " + provider);
@@ -1655,15 +1657,23 @@ public class LocationManagerService extends ILocationManager.Stub implements Run
             Receiver receiver = r.mReceiver;
             boolean receiverDead = false;
 
+            Log.d(TAG, "asdfasf");
             RuleKey ruleKey = new RuleKey(TYPE_GPS, receiver.mUid, receiver.mPackageName);
             Rule rule = mPrivacyRules.get(ruleKey);
-            String pro = location.getProvider();
-            if (pro.equals("playback") &&
-                    mSensorPerturb.isActionPlayback(rule)) {
-                Log.d(TAG, "Sending Playback location to " + receiver.mPackageName);
+            if (playback) {
+                if (mSensorPerturb.isActionPlayback(rule)) {
+                    Log.d(TAG, "Sending Playback location to " + receiver.mPackageName);
+                } else {
+                    Log.d(TAG, "Not sending Playback location to " + receiver.mPackageName);
+                    continue;
+                }
             } else {
-                Log.d(TAG, "Not sending Playback location to " + receiver.mPackageName);
-                continue;
+                if (mSensorPerturb.isActionPlayback(rule)) {
+                    Log.d(TAG, "Not sending gps location to " + receiver.mPackageName);
+                    continue;
+                } else {
+                    Log.d(TAG, "Sending gps location to " + receiver.mPackageName);
+                }
             }
             int receiverUserId = UserHandle.getUserId(receiver.mUid);
             if (receiverUserId != mCurrentUserId) {
