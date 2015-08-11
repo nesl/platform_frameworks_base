@@ -5,10 +5,14 @@ import android.location.Location;
 import android.util.Log;
 import android.util.Slog;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SensorPerturb {
+
+
    private static final String TAG = "LocationSensorPerturb";
    private ArrayList<Location> pb_buffer = new ArrayList<Location>();
+   private Random mRandom = new Random();
 
    public void addLocation(Location l)
    {
@@ -26,8 +30,8 @@ public class SensorPerturb {
        VectorValue vectorValue = action.getParam().getConstantValue().getVecVal();
        notifyLocation.setLatitude(vectorValue.getLat());
        notifyLocation.setLongitude(vectorValue.getLon());
-       Log.d(TAG, "set constant lat" + vectorValue.getLat());
-       Log.d(TAG, "set constant lon" + vectorValue.getLon());
+       Log.d(TAG, "-set constant lat" + vectorValue.getLat());
+       Log.d(TAG, "-set constant lon" + vectorValue.getLon());
        if(vectorValue.hasAccuracy()) {
            notifyLocation.setAccuracy(vectorValue.getAccuracy());
        }
@@ -42,6 +46,41 @@ public class SensorPerturb {
 
    private Location perturbData(Location notifyLocation, Rule rule) {
        // Check date
+       if (notifyLocation != null) {
+           Action action = rule.getAction();
+           // Latitude 1 deg = 110.574 km approximately
+           double lat_degrees_per_km = 9e-3; // 1 km is approximately 0.009 degree
+            // Longitude 1 deg = 111.32 * cos(latitude) KM
+            double lng_degrees_per_km = 0.00898; // 
+
+           Perturb perturb = action.getParam().getPerturb();
+           if (perturb.getDistType() == Perturb.DistributionType.GAUSSIAN) {
+               double mean = perturb.getMean();
+               double variance = perturb.getVariance();
+               double dLat = (mRandom.nextGaussian() * Math.sqrt(variance) + mean) * lat_degrees_per_km;
+               double dLng = (mRandom.nextGaussian() * Math.sqrt(variance) + mean) * lng_degrees_per_km *
+               Math.cos(notifyLocation.getLatitude());
+               notifyLocation.setLatitude(notifyLocation.getLatitude() + dLat);
+               notifyLocation.setLongitude(notifyLocation.getLongitude() + dLng);
+
+           } else if (perturb.getDistType() == Perturb.DistributionType.UNIFORM) {
+               double unifMin = perturb.getUnifMin();
+               double unifMax = perturb.getUnifMax();
+               double dLat = (mRandom.nextDouble() * (unifMax-unifMin) + unifMin) * lat_degrees_per_km;
+               double dLng = (mRandom.nextDouble() * (unifMax-unifMin) + unifMin) * lng_degrees_per_km *
+               Math.cos(notifyLocation.getLatitude());
+               notifyLocation.setLatitude(notifyLocation.getLatitude() + dLat);
+               notifyLocation.setLongitude(notifyLocation.getLongitude() + dLng);
+
+           } else if (perturb.getDistType() == Perturb.DistributionType.EXPONENTIAL) {
+               double lambda = perturb.getExpParam();
+               double dLat = -1.0/ lambda * Math.log(1.0 - mRandom.nextDouble()) * lat_degrees_per_km;
+               double dLng = -1.0/ lambda * Math.log(1.0 - mRandom.nextDouble()) * lng_degrees_per_km *
+               Math.cos(notifyLocation.getLatitude());
+               notifyLocation.setLatitude(notifyLocation.getLatitude() + dLat);
+               notifyLocation.setLongitude(notifyLocation.getLongitude() + dLng);
+           }
+       }
        return notifyLocation;
    }
 
